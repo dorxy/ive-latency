@@ -23,7 +23,7 @@ public class RayController : MonoBehaviour {
 
 		// Init the ray
 		Vector3 pos = this.camera.transform.position;
-		Vector3 dir = this.camera.transform.forward * distance;
+		Vector3 dir = this.camera.transform.forward * distance + pos;
 		Vector3 offsetH = this.camera.transform.up.normalized * heightOffset;
 		pos += offsetH;
 		dir += offsetH;
@@ -43,7 +43,7 @@ public class RayController : MonoBehaviour {
 		
 		// Calculate the current offset and scale and add them to the latencylists
 		Vector3 pos = this.camera.transform.position;
-		Vector3 dir = this.camera.transform.forward * this.distance;
+		Vector3 dir = this.camera.transform.forward * this.distance + pos;
 		Vector3 offsetH = this.camera.transform.up.normalized * heightOffset;
 		pos += offsetH;
 		dir += offsetH;
@@ -60,9 +60,27 @@ public class RayController : MonoBehaviour {
 		// The odd removal is required for the changing of the latency
 		offset = this.OffsetList [0];
 		this.OffsetList.RemoveRange (0, this.OffsetList.Count - this.latencySize);
-//		this.OffsetList.RemoveAt (0);
 
 		this.ray.transform.up = offset;
+
+//		dir = offset + pos;
+
+		// Check all the positions of the 
+		CubeController cc = UnityEngine.Object.FindObjectOfType<CubeController>();
+		List<GameObject> removes = new List<GameObject>();
+		foreach (GameObject sphere in cc.spheres) {
+			Vector3 position = sphere.transform.position;
+			float dist = Vector3.Cross(offset, position - pos).magnitude;
+			if(dist < 12){ // Distance chosen by fair diceroll with 3 dice
+				removes.Add(sphere);
+				Destroy (sphere);
+			}
+		}
+
+		foreach (GameObject toRemove in removes) {
+			cc.spheres.Remove (toRemove);
+			cc.generateNewCube();
+		}
 	}
 
 	void OnGUI() {
@@ -76,6 +94,10 @@ public class RayController : MonoBehaviour {
 
 			Debug.Log ("latencySize is now: " + latencySize);
 		}
+
+		// Uncomment the next line for drawing a crosshair on the creen, wich can be used to see the center,
+		// note that the beam actually does _NOT_ look at the center
+		// GUI.Box(new Rect(Screen.width/2,Screen.height/2, 10, 10), "");
 	}
 
 }
