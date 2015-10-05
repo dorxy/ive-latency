@@ -11,7 +11,7 @@ public class CubeController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		for (int i = 0; i < 3; i++) { //generate 10 random cubes
+		for (int i = 0; i < 1; i++) { //generate 10 random cubes
 			this.generateNewCube ();
 		}
 	}

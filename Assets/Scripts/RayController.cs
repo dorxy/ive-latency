@@ -13,6 +13,13 @@ public class RayController : MonoBehaviour {
 	public float width;
 	public float heightOffset;
 	public float distance;
+
+	public GameObject inRay = null;
+	public int inRayNumberOfFrames;
+
+	public int inRayThreshold;
+
+	public int distanceThreshold;
 	
 	// Use this for initialization
 	void Start () {
@@ -20,6 +27,9 @@ public class RayController : MonoBehaviour {
 		this.width = 0.3f;
 		this.distance = 100.0f;
 		this.heightOffset = 0.5f;
+		this.inRayThreshold = 60;
+		this.inRayNumberOfFrames = 0;
+		this.distanceThreshold = 12;
 
 		// Init the ray
 		Vector3 pos = this.camera.transform.position;
@@ -63,36 +73,59 @@ public class RayController : MonoBehaviour {
 
 		this.ray.transform.up = offset;
 
-//		dir = offset + pos;
-
 		// Check all the positions of the 
 		CubeController cc = UnityEngine.Object.FindObjectOfType<CubeController>();
-		List<GameObject> removes = new List<GameObject>();
+
+		GameObject toRemove = null;
+		GameObject inRayTemp = null;
+
 		foreach (GameObject sphere in cc.spheres) {
 			Vector3 position = sphere.transform.position;
 			float dist = Vector3.Cross(offset, position - pos).magnitude;
-			if(dist < 12){ // Distance chosen by fair diceroll with 3 dice
-				removes.Add(sphere);
-				Destroy (sphere);
+			if(dist < distanceThreshold){ // Distance chosen by fair diceroll with 3 dice
+
+				inRayTemp = sphere;
 			}
 		}
+		
+		if(inRayTemp != null)
+			inRayTemp.GetComponent<Renderer>().material.color = Color.red;
+		else if (inRayTemp != inRay && inRay != null)
+			inRay.GetComponent<Renderer>().material.color = Color.green;
 
-		foreach (GameObject toRemove in removes) {
-			cc.spheres.Remove (toRemove);
-			cc.generateNewCube();
+		if (inRayTemp == inRay && inRayTemp != null) {
+			inRayNumberOfFrames ++;
+			if (inRayNumberOfFrames >= this.inRayThreshold) {
+				cc.spheres.Remove (inRay);
+				Destroy (inRay);
+				cc.generateNewCube ();
+			}
+		} else {
+			inRay = inRayTemp;
+			inRayNumberOfFrames = 0;
 		}
 	}
 
 	void OnGUI() {
 		Event e = Event.current;
 
-		if (e.isKey){
-			if(e.keyCode == KeyCode.Equals)
-				latencySize++;
-			else if(e.keyCode == KeyCode.Minus)
-				latencySize = Math.Max(0, latencySize - 1); // Prevent latencySize from becoming negative
+		if (e.isKey && e.type == EventType.keyDown){
+			int dir = e.shift?-1:1;
+
+			switch(e.keyCode){
+				case KeyCode.D:
+					this.distanceThreshold = Math.Max(0, distanceThreshold + dir );
+					break;
+				case KeyCode.L:
+					this.latencySize = Math.Max(0, latencySize + dir );
+					break;
+				case KeyCode.T:
+					this.inRayThreshold = Math.Max(0, inRayThreshold + dir );
+					break;
+			}
 
 			Debug.Log ("latencySize is now: " + latencySize);
+			Debug.Log ("inRayThreshold is now " + inRayThreshold);
 		}
 
 		// Uncomment the next line for drawing a crosshair on the creen, wich can be used to see the center,

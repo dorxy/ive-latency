@@ -76,4 +76,8 @@ public class CameraController : MonoBehaviour {
 			transform.localRotation *= yRotation;
 		}
 	}
+
+	void Awake() {
+		Application.targetFrameRate = 60;
+	}
 }
