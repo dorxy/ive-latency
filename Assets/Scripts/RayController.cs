@@ -31,12 +31,12 @@ public class RayController : MonoBehaviour {
 	void Start () {
 		data = (DataController) FindObjectOfType (typeof(DataController));
 
-		this.width = 0.3f;
+		this.width = 0.1f;
 		this.distance = 100.0f;
 		this.heightOffset = 0.5f;
 		this.inRayThreshold = 60;
 		this.inRayNumberOfFrames = 0;
-		this.distanceThreshold = 12;
+		this.distanceThreshold = 20;
 
 		// Init the ray
 		Vector3 pos = this.camera.transform.position;
@@ -96,9 +96,9 @@ public class RayController : MonoBehaviour {
 		}
 		
 		if(inRayTemp != null)
-			inRayTemp.GetComponent<Renderer>().material.color = Color.red;
+			inRayTemp.GetComponent<Renderer>().material.color = Color.green;
 		else if (inRayTemp != inRay && inRay != null)
-			inRay.GetComponent<Renderer>().material.color = Color.green;
+			inRay.GetComponent<Renderer>().material.color = Color.red;
 
 		if (inRayTemp == inRay && inRayTemp != null) {
 			inRayNumberOfFrames ++;

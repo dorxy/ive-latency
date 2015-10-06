@@ -53,7 +53,7 @@ public class CubeController : MonoBehaviour {
 			switch (e.keyCode) {
 			case KeyCode.S:
 				if (this.cameraDistance == 0) {
-					this.cameraDistance = 5f;
+					this.cameraDistance = 7.5f;
 				} else {
 					this.cameraDistance = 0;
 				}

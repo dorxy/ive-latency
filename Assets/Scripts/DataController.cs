@@ -9,6 +9,10 @@ public class DataController : MonoBehaviour {
 	private CubeController cubeController;
 	private RayController rayController;
 	private StreamWriter logFile;
+	private Int32 timestamp;
+	private GameObject lastSphere;
+	private Int64 lastTime;
+	private int sphereCount;
 
 	// Use this for initialization
 	void Start () {
@@ -19,6 +23,9 @@ public class DataController : MonoBehaviour {
 
 		cubeController = (CubeController) FindObjectOfType (typeof(CubeController));
 		rayController = (RayController) FindObjectOfType (typeof(RayController));
+
+		sphereCount = 0;
+		lastTime = 0;
 
 		Directory.CreateDirectory ("Data");
 		createNewLogFile();
@@ -44,7 +51,18 @@ public class DataController : MonoBehaviour {
 		//distance of the intersect
 		String distance = rayController.distanceThreshold.ToString () + " D\n";
 
-		GUI.Label(rect, spheres + latency + threshold + distance, labelStyle);
+		GUI.Label(rect, timestamp.ToString() + " /  " + sphereCount + "\n" + spheres + latency + threshold + distance, labelStyle);
+
+
+		Event e = Event.current;
+		
+		if (e.isKey && e.type == EventType.keyDown) {
+			switch (e.keyCode) {
+			case KeyCode.N:
+				this.createNewLogFile();
+				break;
+			}
+		}
 	}
 
 	void OnApplicationQuit(){
@@ -54,22 +72,46 @@ public class DataController : MonoBehaviour {
 	static Int32 getTimeStamp(){
 		return (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 	}
+	static Int64 getTimeStampWithMilliseconds(){
+		return (Int64)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
+	}
+
 
 	void createNewLogFile(){
 		if(logFile != null){
 			logFile.Close ();
 		}
-		logFile = new StreamWriter("Data/"+ getTimeStamp().ToString() +".txt");
+		this.timestamp = getTimeStamp ();
+		logFile = new StreamWriter("Data/"+ this.timestamp.ToString() +".txt");
 		logFile.AutoFlush = true;
 		logFile.Write("Latency: " + rayController.getLatency().ToString() + ", ");
-		logFile.Write ("Spheres: " + (cubeController.cameraDistance == 0 ? "variable" : "fixed") + ", ");
+		logFile.Write("Spheres: " + (cubeController.cameraDistance == 0 ? "variable" : "fixed") + ", ");
 		logFile.Write("Intersect duration: " + rayController.inRayThreshold.ToString() + ", ");
-		logFile.WriteLine("Intersect distance: " + rayController.distanceThreshold.ToString());
+		logFile.WriteLine("Intersect distance: " + rayController.distanceThreshold);
+		logFile.WriteLine ("timestamp, x, y, z, distance, time");
+		Destroy (lastSphere);
 	}
 
 	public void writeSphereToLog(GameObject sphere){
-		logFile.WriteLine ("Touched sphere");
+		Int64 timestamp = getTimeStampWithMilliseconds ();
+		logFile.Write(timestamp + ", ");
+		logFile.Write (sphere.transform.position.x + ", " + sphere.transform.position.y + ", " + sphere.transform.position.z);
 
+		float distance = 0;
+		if (lastSphere != null) {
+			distance = Vector3.Distance(lastSphere.transform.position, sphere.transform.position);
+		}
+		if (lastTime == 0)
+			lastTime = timestamp;
+		logFile.WriteLine (", " + distance + ", " + (timestamp - lastTime));
+
+		lastTime = timestamp;
+
+		Destroy (lastSphere);
+		lastSphere = Instantiate(sphere);
+		lastSphere.GetComponent<Renderer> ().enabled = false;
+
+		sphereCount++;
 	}
 
 
