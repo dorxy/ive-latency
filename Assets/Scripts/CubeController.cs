@@ -11,9 +11,7 @@ public class CubeController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		for (int i = 0; i < 1; i++) { //generate 10 random cubes
-			this.generateNewCube ();
-		}
+		this.generateNewCube ();
 	}
 	
 	// Update is called once per frame
@@ -46,5 +44,21 @@ public class CubeController : MonoBehaviour {
 
 	float randomInBetween(float from, float to){
 		return (Random.value * (to - from)) + from;
+	}
+
+	void OnGUI() {
+		Event e = Event.current;
+		
+		if (e.isKey && e.type == EventType.keyDown) {
+			switch (e.keyCode) {
+			case KeyCode.S:
+				if (this.cameraDistance == 0) {
+					this.cameraDistance = 5f;
+				} else {
+					this.cameraDistance = 0;
+				}
+				break;
+			}
+		}
 	}
 }

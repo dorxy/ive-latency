@@ -20,9 +20,16 @@ public class RayController : MonoBehaviour {
 	public int inRayThreshold;
 
 	public int distanceThreshold;
+
+	private DataController data;
+
+	public int getLatency(){
+		return this.latencySize;
+	}
 	
 	// Use this for initialization
 	void Start () {
+		data = (DataController) FindObjectOfType (typeof(DataController));
 
 		this.width = 0.3f;
 		this.distance = 100.0f;
@@ -96,6 +103,7 @@ public class RayController : MonoBehaviour {
 		if (inRayTemp == inRay && inRayTemp != null) {
 			inRayNumberOfFrames ++;
 			if (inRayNumberOfFrames >= this.inRayThreshold) {
+				data.writeSphereToLog(inRay);
 				cc.spheres.Remove (inRay);
 				Destroy (inRay);
 				cc.generateNewCube ();
@@ -123,9 +131,6 @@ public class RayController : MonoBehaviour {
 					this.inRayThreshold = Math.Max(0, inRayThreshold + dir );
 					break;
 			}
-
-			Debug.Log ("latencySize is now: " + latencySize);
-			Debug.Log ("inRayThreshold is now " + inRayThreshold);
 		}
 
 		// Uncomment the next line for drawing a crosshair on the creen, wich can be used to see the center,
