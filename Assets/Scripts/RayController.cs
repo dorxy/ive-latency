@@ -81,7 +81,7 @@ public class RayController : MonoBehaviour {
 		this.ray.transform.up = offset;
 
 		// Check all the positions of the 
-		CubeController cc = UnityEngine.Object.FindObjectOfType<CubeController>();
+		SphereController cc = UnityEngine.Object.FindObjectOfType<SphereController>();
 
 		GameObject toRemove = null;
 		GameObject inRayTemp = null;
@@ -106,7 +106,7 @@ public class RayController : MonoBehaviour {
 				data.writeSphereToLog(inRay);
 				cc.spheres.Remove (inRay);
 				Destroy (inRay);
-				cc.generateNewCube ();
+				cc.generateNewSphere ();
 			}
 		} else {
 			inRay = inRayTemp;

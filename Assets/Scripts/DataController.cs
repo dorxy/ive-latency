@@ -6,7 +6,7 @@ using System.IO;
 public class DataController : MonoBehaviour {
 
 	private GUIStyle labelStyle;
-	private CubeController cubeController;
+	private SphereController sphereController;
 	private RayController rayController;
 	private StreamWriter logFile;
 	private Int32 timestamp;
@@ -21,7 +21,7 @@ public class DataController : MonoBehaviour {
 		labelStyle.fontSize = Screen.height / 25;
 		labelStyle.normal.textColor = new Color (1.0f, 1.0f, 1.0f, 1.0f); //white
 
-		cubeController = (CubeController) FindObjectOfType (typeof(CubeController));
+		sphereController = (SphereController) FindObjectOfType (typeof(SphereController));
 		rayController = (RayController) FindObjectOfType (typeof(RayController));
 
 		sphereCount = 0;
@@ -39,11 +39,10 @@ public class DataController : MonoBehaviour {
 	//show any updates on the GUI
 	void OnGUI()
 	{
-		int w = Screen.width, h = Screen.height;
-		Rect rect = new Rect(0, 0, w, Screen.height / 25);
+		Rect rect = new Rect(0, 0, Screen.width, Screen.height / 25);
 
 		//distance of spheres
-		String spheres = (cubeController.cameraDistance == 0 ? "var" : "fixed") + " S\n";
+		String spheres = (sphereController.cameraDistance == 0 ? "var" : "fixed") + " S\n";
 		//latency of the ray
 		String latency = rayController.getLatency ().ToString() + " L\n";
 		//threshold of the ray
@@ -85,7 +84,7 @@ public class DataController : MonoBehaviour {
 		logFile = new StreamWriter("Data/"+ this.timestamp.ToString() +".txt");
 		logFile.AutoFlush = true;
 		logFile.Write("Latency: " + rayController.getLatency().ToString() + ", ");
-		logFile.Write("Spheres: " + (cubeController.cameraDistance == 0 ? "variable" : "fixed") + ", ");
+		logFile.Write("Spheres: " + (sphereController.cameraDistance == 0 ? "variable" : "fixed") + ", ");
 		logFile.Write("Intersect duration: " + rayController.inRayThreshold.ToString() + ", ");
 		logFile.WriteLine("Intersect distance: " + rayController.distanceThreshold);
 		logFile.WriteLine ("timestamp, x, y, z, distance, time");
