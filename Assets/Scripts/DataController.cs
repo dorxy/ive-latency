@@ -87,7 +87,7 @@ public class DataController : MonoBehaviour {
 		logFile.Write("Spheres: " + (sphereController.cameraDistance == 0 ? "variable" : "fixed") + ", ");
 		logFile.Write("Intersect duration: " + rayController.inRayThreshold.ToString() + ", ");
 		logFile.WriteLine("Intersect distance: " + rayController.distanceThreshold);
-		logFile.WriteLine ("timestamp, x, y, z, distance, time");
+		logFile.WriteLine ("timestamp, x, y, z, distance, time, distanceToCamera");
 		Destroy (lastSphere);
 		sphereCount = 0;
 	}
@@ -103,7 +103,9 @@ public class DataController : MonoBehaviour {
 		}
 		if (lastTime == 0)
 			lastTime = timestamp;
-		logFile.WriteLine (", " + distance + ", " + (timestamp - lastTime));
+
+		float distanceToCamera = Vector3.Distance(rayController.camera.transform.position, sphere.transform.position);
+		logFile.WriteLine (", " + distance + ", " + (timestamp - lastTime) + ", " + distanceToCamera);
 
 		lastTime = timestamp;
 
