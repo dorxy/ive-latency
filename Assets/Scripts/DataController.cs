@@ -17,7 +17,7 @@ public class DataController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		labelStyle = new GUIStyle();
-		labelStyle.alignment = TextAnchor.UpperRight;
+		labelStyle.alignment = TextAnchor.MiddleRight;
 		labelStyle.fontSize = Screen.height / 25;
 		labelStyle.normal.textColor = new Color (1.0f, 1.0f, 1.0f, 1.0f); //white
 
@@ -39,7 +39,7 @@ public class DataController : MonoBehaviour {
 	//show any updates on the GUI
 	void OnGUI()
 	{
-		Rect rect = new Rect(0, 0, Screen.width, Screen.height / 25);
+		Rect rect = new Rect(100f, 450f, Screen.width, Screen.height / 25);
 
 		//distance of spheres
 		String spheres = (sphereController.cameraDistance == 0 ? "var" : "fixed") + " S\n";
@@ -89,6 +89,7 @@ public class DataController : MonoBehaviour {
 		logFile.WriteLine("Intersect distance: " + rayController.distanceThreshold);
 		logFile.WriteLine ("timestamp, x, y, z, distance, time");
 		Destroy (lastSphere);
+		sphereCount = 0;
 	}
 
 	public void writeSphereToLog(GameObject sphere){
